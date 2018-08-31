@@ -5,13 +5,16 @@
     using System.Text;
     using Contracts;
     using Enums;
-    using Handlers;
     using Exceptions;
+    using System.Linq;
+    using System.Net;
 
     public class HttpRequest : IHttpRequest
     {
         public HttpRequest(string requestText)
         {
+            CoreValidator.ThrowIfNullOrEmpty(requestText, nameof(requestText));
+
             this.HeaderCollection = new HttpHeaderCollection();
             this.UrlParameters = new Dictionary<string, string>();
             this.QueryParameters = new Dictionary<string, string>();
@@ -38,7 +41,7 @@
         {
             CoreValidator.ThrowIfNullOrEmpty(key, nameof(key));
             CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
-            UrlParameters[key] = value;
+            this.UrlParameters[key] = value;
         }
 
         private void ParseRequest(string requestText)
@@ -46,6 +49,10 @@
             string[] requestLines = requestText
                 .Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
+            if (!requestLines.Any())
+            {
+                throw new BadRequestException("Request is invalid!");
+            }
             string[] requestLine = requestLines[0].Trim()
                 .Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -57,15 +64,50 @@
             this.RequestMethod = this.ParseRequestMethod(requestLine[0].ToUpper());
             this.Url = requestLine[1];
             this.Path = this.Url
-                .Split(new[] { '?', '#'}, StringSplitOptions.RemoveEmptyEntries)[0];
+                .Split(new[] { '?', '#' }, StringSplitOptions.RemoveEmptyEntries)[0];
 
             this.ParseHeaders(requestLines);
             this.ParseParameters();
+            this.ParseFormData(requestLines.Last());
+        }
+
+        private void ParseFormData(string formDataLine)
+        {
+            if (this.RequestMethod == HttpRequestMethod.Post)
+            {
+                this.ParseQuery(formDataLine, this.FormData);
+            }
         }
 
         private void ParseParameters()
         {
-            throw new NotImplementedException();
+            if (!this.Url.Contains("?"))
+            {
+                return;
+            }
+            string query = this.Url.Split(new[] { "?" }, StringSplitOptions.RemoveEmptyEntries).Last();
+            this.ParseQuery(query, this.QueryParameters);  //??? UrlParameters
+        }
+
+        private void ParseQuery(string queryString, IDictionary<string, string> dict)
+        {
+            if (!queryString.Contains("="))
+            {
+                return;
+            }
+            var queryPairs = queryString.Split(new[] { "&" }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var queryPair in queryPairs)
+            {
+                var queryArgs = queryPair.Split(new[] { "=" }, StringSplitOptions.RemoveEmptyEntries);
+                if (queryArgs.Length != 2)
+                {
+                    return;
+                }
+
+                var queryKey = WebUtility.UrlDecode(queryArgs[0]);
+                var queryValue = WebUtility.UrlDecode(queryArgs[1]);
+                dict.Add(queryKey, queryValue);
+            }
         }
 
         private void ParseHeaders(string[] requestLines)
@@ -78,8 +120,12 @@
                     .Split(new[] { ": " }, StringSplitOptions.None);
 
                 //create a new HttpHeader and add it to the collection
+                if (headerArgs.Length != 2)
+                {
+                    throw new BadRequestException("Invalid header arguments");
+                }
                 var key = headerArgs[0];
-                var value = headerArgs[1];
+                var value = headerArgs[1].Trim();
                 CoreValidator.ThrowIfNullOrEmpty(key, nameof(key));
                 CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
 
@@ -99,7 +145,14 @@
 
         private HttpRequestMethod ParseRequestMethod(string typeRequest)
         {
-            return (HttpRequestMethod)Enum.Parse(typeof(HttpRequestMethod), typeRequest);
+            try
+            {
+                return (HttpRequestMethod)Enum.Parse(typeof(HttpRequestMethod), typeRequest, true);
+            }
+            catch (Exception)
+            {
+                throw new BadRequestException("Invalid type request method");
+            }
         }
     }
 }

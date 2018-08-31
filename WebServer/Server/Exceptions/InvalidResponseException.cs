@@ -4,9 +4,10 @@
     using System.Collections.Generic;
     using System.Text;
 
-    public class BadRequestException: Exception
+    public class InvalidResponseException : Exception
     {
-        public BadRequestException(string message) : base()
+        public InvalidResponseException(string message)
+            : base(message)
         {
 
         }

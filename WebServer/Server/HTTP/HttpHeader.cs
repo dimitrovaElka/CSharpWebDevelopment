@@ -1,12 +1,6 @@
 ﻿
 namespace WebServer.Server.HTTP
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-
-    using WebServer.Server.Handlers;
-
     public class HttpHeader
     {
         public HttpHeader(string key, string value)

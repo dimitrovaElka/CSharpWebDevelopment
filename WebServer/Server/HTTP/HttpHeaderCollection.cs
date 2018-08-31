@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using Contracts;
-    using WebServer.Server.Handlers;
     using System;
 
     public class HttpHeaderCollection : IHttpHeaderCollection
