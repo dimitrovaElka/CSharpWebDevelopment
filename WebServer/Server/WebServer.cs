@@ -32,9 +32,9 @@
 
             Console.WriteLine($"Server started. Listening to TCP clients at 127.0.0.1: {port}");
 
-            //Task task = Task.Run(this.ListenLoop);
-            //task.Wait();
-            Task.Run(this.ListenLoop).Wait();
+            Task task = Task.Run(this.ListenLoop);
+            task.Wait();
+            //Task.Run(this.ListenLoop).Wait();
         }
 
         private async Task ListenLoop()

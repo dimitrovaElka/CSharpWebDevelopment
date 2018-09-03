@@ -1,8 +1,5 @@
 ﻿namespace WebServer.Application.Views
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
     using Server.HTTP.Contracts;
 
     public class HomeIndexView : IView

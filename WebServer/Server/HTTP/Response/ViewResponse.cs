@@ -20,7 +20,7 @@
         private void ValidateStatusCode(HttpStatusCode statusCode)
         {
             var statusCodeNumber = (int)statusCode;
-            if (statusCodeNumber > 299  || statusCodeNumber < 400)
+            if (statusCodeNumber > 299  && statusCodeNumber < 400)
             {
                 //response.AppendLine(this.view.View());
                 throw new InvalidResponseException("View responses need a status code below 300 and above 400 (inclusive)");

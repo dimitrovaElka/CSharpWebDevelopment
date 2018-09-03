@@ -1,12 +1,13 @@
 ﻿namespace WebServer
 {
-    using Server.Routing;
+    using Application;
     using Server;
     using Server.Contracts;
+    using Server.Routing;
 
     public class Launcher : IRunnable
     {
-        private WebServer webServer;
+        //private WebServer webServer;
 
         public static void Main()
         {
@@ -15,9 +16,12 @@
 
         public void Run()
         {
+            var app = new MainApplication();
             var routeConfig = new AppRouteConfig();
-            this.webServer = new WebServer(8230, routeConfig);
-            this.webServer.Run();
+            app.Start(routeConfig);
+
+            var webServer = new WebServer(1337, routeConfig);
+            webServer.Run();
         }
     }
 }

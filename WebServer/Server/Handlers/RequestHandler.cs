@@ -18,7 +18,7 @@ namespace WebServer.Server.Handlers
         public IHttpResponse Handle(IHttpContext httpContext)
         {
             IHttpResponse response = this.handlingFunc(httpContext.Request);
-            response.Headers.Add(new HttpHeader("Content-Type", "text/plain"));
+            response.Headers.Add(new HttpHeader("Content-Type", "text/html"));
 
             return response;
         }

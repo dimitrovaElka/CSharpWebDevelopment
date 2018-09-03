@@ -47,7 +47,7 @@
         private void ParseRequest(string requestText)
         {
             string[] requestLines = requestText
-                .Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+                .Split(Environment.NewLine);
 
             if (!requestLines.Any())
             {
