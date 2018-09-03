@@ -54,14 +54,14 @@
                 throw new BadRequestException("Request is invalid!");
             }
             string[] requestLine = requestLines[0].Trim()
-                .Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
             if (requestLine.Length != 3 || requestLine[2].ToLower() != "http/1.1")
             {
                 throw new BadRequestException("Invalid request line");
             }
 
-            this.RequestMethod = this.ParseRequestMethod(requestLine[0].ToUpper());
+            this.RequestMethod = this.ParseRequestMethod(requestLine.First());
             this.Url = requestLine[1];
             this.Path = this.Url
                 .Split(new[] { '?', '#' }, StringSplitOptions.RemoveEmptyEntries)[0];
@@ -86,7 +86,9 @@
                 return;
             }
             string query = this.Url.Split(new[] { "?" }, StringSplitOptions.RemoveEmptyEntries).Last();
-            this.ParseQuery(query, this.QueryParameters);  //??? UrlParameters
+            // this.ParseQuery(query, this.QueryParameters);  //??? UrlParameters
+            
+            this.ParseQuery(query, this.UrlParameters);
         }
 
         private void ParseQuery(string queryString, IDictionary<string, string> dict)
@@ -95,10 +97,10 @@
             {
                 return;
             }
-            var queryPairs = queryString.Split(new[] { "&" }, StringSplitOptions.RemoveEmptyEntries);
+            var queryPairs = queryString.Split(new[] { '&' });
             foreach (var queryPair in queryPairs)
             {
-                var queryArgs = queryPair.Split(new[] { "=" }, StringSplitOptions.RemoveEmptyEntries);
+                var queryArgs = queryPair.Split(new[] { '=' });
                 if (queryArgs.Length != 2)
                 {
                     return;
@@ -143,16 +145,23 @@
             }
         }
 
-        private HttpRequestMethod ParseRequestMethod(string typeRequest)
+        private HttpRequestMethod ParseRequestMethod(string method)
         {
-            try
-            {
-                return (HttpRequestMethod)Enum.Parse(typeof(HttpRequestMethod), typeRequest, true);
-            }
-            catch (Exception)
+            //try
+            //{
+            //    return (HttpRequestMethod)Enum.Parse(typeof(HttpRequestMethod), typeRequest, true);
+            //}
+            //catch (Exception)
+            //{
+            //    throw new BadRequestException("Invalid type request method");
+            //}
+            HttpRequestMethod parsedMethod;
+            if (!Enum.TryParse(method, true, out parsedMethod))
             {
                 throw new BadRequestException("Invalid type request method");
             }
+
+            return parsedMethod;
         }
     }
 }

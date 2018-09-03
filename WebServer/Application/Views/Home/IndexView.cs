@@ -1,8 +1,8 @@
-﻿namespace WebServer.Application.Views
+﻿namespace WebServer.Application.Views.Home
 {
     using Server.HTTP.Contracts;
 
-    public class HomeIndexView : IView
+    public class IndexView : IView
     {
         public string View()
         {

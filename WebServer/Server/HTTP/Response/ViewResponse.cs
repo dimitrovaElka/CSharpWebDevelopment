@@ -15,6 +15,9 @@
 
             this.view = view;
             this.StatusCode = statusCode;
+
+           // this.Headers.Add(HttpHeader.)
+             this.Headers.Add(HttpHeader.ContentType, "text/html");
         }
 
         private void ValidateStatusCode(HttpStatusCode statusCode)

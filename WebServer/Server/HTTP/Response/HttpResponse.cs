@@ -31,10 +31,10 @@ namespace WebServer.Server.HTTP.Response
         public override string ToString()
         {
             StringBuilder response = new StringBuilder();
-            response.AppendLine($"HTTP/1.1 {this.StatusCode} {this.StatusMessage}");
-            response.AppendLine(this.Headers.ToString());
             var statusCodeNumber = (int)this.StatusCode;
-
+            response.AppendLine($"HTTP/1.1 {statusCodeNumber} {this.StatusMessage}");
+            response.AppendLine(this.Headers.ToString());
+            
             return response.ToString();
         }
     }

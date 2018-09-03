@@ -19,6 +19,14 @@
             this.headers[header.Key] = header;
         }
 
+        public void Add(string key, string value)
+        {
+            CoreValidator.ThrowIfNullOrEmpty(key, nameof(key));
+            CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
+
+            this.Add(new HttpHeader(key, value));
+        }
+
         public bool ContainsKey(string key)
         {
             CoreValidator.ThrowIfNull(key, nameof(key));

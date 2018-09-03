@@ -1,7 +1,7 @@
 ﻿
 namespace WebServer.Application.Controllers
 {
-    using Application.Views;
+    using Application.Views.Home;
     using Server.Enums;
     using Server.HTTP.Contracts;
     using Server.HTTP.Response;
@@ -11,7 +11,7 @@ namespace WebServer.Application.Controllers
         // GET /
         public IHttpResponse Index()
         {
-            return new ViewResponse(HttpStatusCode.Ok, new HomeIndexView());
+            return new ViewResponse(HttpStatusCode.Ok, new IndexView());
         }
     }
 }
