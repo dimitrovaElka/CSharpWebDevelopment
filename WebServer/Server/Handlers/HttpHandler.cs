@@ -4,6 +4,8 @@
     using HTTP.Contracts;
     using HTTP.Response;
     using Routing.Contracts;
+    using Server.Exceptions;
+    using System;
     using System.Text.RegularExpressions;
 
     public class HttpHandler : IRequestHandler
@@ -19,33 +21,40 @@
 
         public IHttpResponse Handle(IHttpContext context)
         {
-            var requestMethod = context.Request.RequestMethod;
-            var requestPath = context.Request.Path;
-            var registeredRoutes = this.serverRouteConfig.Routes[requestMethod];
-
-            foreach (var registeredRoute in registeredRoutes)
+            try
             {
-                var routePattern = registeredRoute.Key;
-                var routingContext = registeredRoute.Value;
+                var requestMethod = context.Request.RequestMethod;
+                var requestPath = context.Request.Path;
+                var registeredRoutes = this.serverRouteConfig.Routes[requestMethod];
 
-                var routeRegex = new Regex(routePattern);
-                var routeMatch = routeRegex.Match(requestPath);
-
-                if (!routeMatch.Success)
+                foreach (var registeredRoute in registeredRoutes)
                 {
-                    continue;
+                    var routePattern = registeredRoute.Key;
+                    var routingContext = registeredRoute.Value;
+
+                    var routeRegex = new Regex(routePattern);
+                    var match = routeRegex.Match(requestPath);
+
+                    if (!match.Success)
+                    {
+                        continue;
+                    }
+
+                    var parameters = routingContext.Parameters;
+
+                    foreach (var parameter in parameters)
+                    {
+                        var parameterValue = match.Groups[parameter].Value;
+                        context.Request.AddUrlParameter(parameter, parameterValue);
+                    }
+
+                    return routingContext.RequestHandler.Handle(context);
                 }
+            }
+            catch (Exception ex)
+            {
 
-                var parameters = routingContext.Parameters;
-
-                foreach (var parameter in parameters)
-                {
-                    var parameterValue = routeMatch.Groups[parameter].Value;
-
-                    context.Request.AddUrlParameter(parameter, parameterValue);
-                }
-
-                return routingContext.RequestHandler.Handle(context);
+                throw new BadRequestException(ex.Message);
             }
 
             return new NotFoundResponse();

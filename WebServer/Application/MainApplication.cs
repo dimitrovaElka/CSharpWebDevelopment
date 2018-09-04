@@ -1,17 +1,16 @@
 ﻿namespace WebServer.Application
 {
-    using System;
     using Application.Controllers;
     using Server.Contracts;
-    using Server.Handlers;
     using Server.Routing.Contracts;
 
     public class MainApplication : IApplication
     {
-        public void Start(IAppRouteConfig appRouteConfig)
+        public void Configure(IAppRouteConfig appRouteConfig)
         {
-            var handler = new GetHandler(httpContext => new HomeController().Index());
-            appRouteConfig.AddRoute("/", handler);
+            // var handler = new GetHandler(httpContext => new HomeController().Index());
+            //appRouteConfig.AddRoute("/", handler);
+            appRouteConfig.Get("/", req => new HomeController().Index());
         }
     }
 }

@@ -1,19 +1,17 @@
 ﻿namespace WebServer.Server.HTTP.Contracts
 {
-    using System;
     using System.Collections.Generic;
-    using System.Text;
     using Enums;
 
     public interface IHttpRequest
     {
         IDictionary<string, string> FormData { get; }
 
-        HttpHeaderCollection HeaderCollection { get; }
+        HttpHeaderCollection Headers { get; }
 
         string Path { get; }
 
-        IDictionary<string, string> QueryParameters { get; }
+      //  IDictionary<string, string> QueryParameters { get; }
 
         HttpRequestMethod RequestMethod { get; }
 

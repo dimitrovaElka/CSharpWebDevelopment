@@ -1,7 +1,7 @@
 ﻿namespace WebServer.Server.HTTP.Response
 {
     using Enums;
-    using Contracts;
+    using Server.Contracts;
     using Exceptions;
     using System;
 
@@ -23,6 +23,7 @@
         private void ValidateStatusCode(HttpStatusCode statusCode)
         {
             var statusCodeNumber = (int)statusCode;
+
             if (statusCodeNumber > 299  && statusCodeNumber < 400)
             {
                 //response.AppendLine(this.view.View());
@@ -32,7 +33,7 @@
 
         public override string ToString()
         {
-            return $"{base.ToString()} {this.view.View()}";
+            return $"{base.ToString()}{this.view.View()}";
         }
     }
 }

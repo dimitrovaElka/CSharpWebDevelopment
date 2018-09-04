@@ -1,11 +1,9 @@
 ﻿
 namespace WebServer.Server.HTTP.Response
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
     using Contracts;
     using Enums;
+    using System.Text;
 
     public abstract class HttpResponse : IHttpResponse
     {
@@ -24,15 +22,17 @@ namespace WebServer.Server.HTTP.Response
         //{
         //}
 
-        public HttpHeaderCollection Headers { get; }
+        public IHttpHeaderCollection Headers { get; }
 
         public HttpStatusCode StatusCode { get; protected set; }
 
         public override string ToString()
         {
             StringBuilder response = new StringBuilder();
+
             var statusCodeNumber = (int)this.StatusCode;
             response.AppendLine($"HTTP/1.1 {statusCodeNumber} {this.StatusMessage}");
+
             response.AppendLine(this.Headers.ToString());
             
             return response.ToString();

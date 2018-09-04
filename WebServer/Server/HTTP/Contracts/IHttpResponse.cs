@@ -4,10 +4,9 @@
 
     public interface IHttpResponse
     {
-        HttpHeaderCollection Headers { get; }
+        IHttpHeaderCollection Headers { get; }
 
         HttpStatusCode StatusCode { get; }
 
-      //  string StatusMessage { get; }
     }
 }

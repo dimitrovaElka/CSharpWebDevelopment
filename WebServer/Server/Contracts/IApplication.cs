@@ -1,9 +1,9 @@
 ﻿namespace WebServer.Server.Contracts
 {
-    using Server.Routing.Contracts;
+    using Routing.Contracts;
 
     public interface IApplication
     {
-        void Start(IAppRouteConfig appRouteConfig);
+        void Configure(IAppRouteConfig appRouteConfig);
     }
 }

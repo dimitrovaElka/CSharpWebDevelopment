@@ -6,7 +6,7 @@ namespace WebServer.Server.Handlers
     using Server.HTTP.Contracts;
     using Server.HTTP;
 
-    public abstract class RequestHandler : IRequestHandler
+    public class RequestHandler : IRequestHandler
     {
         private readonly Func<IHttpRequest, IHttpResponse> handlingFunc;
         public RequestHandler(Func<IHttpRequest, IHttpResponse> handlingFunc)
@@ -15,10 +15,14 @@ namespace WebServer.Server.Handlers
             this.handlingFunc = handlingFunc;
         }
 
-        public IHttpResponse Handle(IHttpContext httpContext)
+        public IHttpResponse Handle(IHttpContext context)
         {
-            IHttpResponse response = this.handlingFunc(httpContext.Request);
-            response.Headers.Add(new HttpHeader("Content-Type", "text/html"));
+            IHttpResponse response = this.handlingFunc(context.Request);
+            // response.Headers.Add(new HttpHeader("Content-Type", "text/html"));
+            if (!response.Headers.ContainsKey(HttpHeader.ContentType))
+            {
+                response.Headers.Add(HttpHeader.ContentType, "text/html");
+            }
 
             return response;
         }

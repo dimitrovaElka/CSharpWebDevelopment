@@ -11,7 +11,9 @@ namespace WebServer.Application.Controllers
         // GET /
         public IHttpResponse Index()
         {
-            return new ViewResponse(HttpStatusCode.Ok, new IndexView());
+            var response = new ViewResponse(HttpStatusCode.Ok, new IndexView());
+
+            return response;
         }
     }
 }

@@ -18,7 +18,7 @@
         {
             var app = new MainApplication();
             var routeConfig = new AppRouteConfig();
-            app.Start(routeConfig);
+            app.Configure(routeConfig);
 
             var webServer = new WebServer(1337, routeConfig);
             webServer.Run();

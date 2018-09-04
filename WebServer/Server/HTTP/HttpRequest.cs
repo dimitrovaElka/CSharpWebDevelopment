@@ -15,7 +15,7 @@
         {
             CoreValidator.ThrowIfNullOrEmpty(requestText, nameof(requestText));
 
-            this.HeaderCollection = new HttpHeaderCollection();
+            this.Headers = new HttpHeaderCollection();
             this.UrlParameters = new Dictionary<string, string>();
             this.QueryParameters = new Dictionary<string, string>();
             this.FormData = new Dictionary<string, string>();
@@ -25,7 +25,7 @@
 
         public IDictionary<string, string> FormData { get; }
 
-        public HttpHeaderCollection HeaderCollection { get; private set; }
+        public HttpHeaderCollection Headers { get; private set; }
 
         public string Path { get; private set; }
 
@@ -136,7 +136,7 @@
                 {
                     hasHost = true;
                 }
-                HeaderCollection.Add(header);
+                Headers.Add(header);
             }
 
             if (!hasHost)

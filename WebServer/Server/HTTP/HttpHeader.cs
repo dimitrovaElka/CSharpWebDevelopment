@@ -11,9 +11,11 @@ namespace WebServer.Server.HTTP
         {
             CoreValidator.ThrowIfNullOrEmpty(key, nameof(key));
             CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
+
             this.Key = key;
             this.Value = value;
         }
+
         public string Key { get; private set; }
 
         public string Value { get; private set; }
