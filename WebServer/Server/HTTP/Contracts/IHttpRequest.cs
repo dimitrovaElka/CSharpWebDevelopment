@@ -11,7 +11,7 @@
 
         string Path { get; }
 
-      //  IDictionary<string, string> QueryParameters { get; }
+        IDictionary<string, string> QueryParameters { get; }
 
         HttpRequestMethod RequestMethod { get; }
 

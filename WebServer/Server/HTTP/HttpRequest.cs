@@ -1,11 +1,11 @@
 ﻿namespace WebServer.Server.HTTP
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
+    using Common;
     using Contracts;
     using Enums;
     using Exceptions;
+    using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Net;
 
@@ -53,7 +53,7 @@
             {
                 throw new BadRequestException("Request is invalid!");
             }
-            string[] requestLine = requestLines[0].Trim()
+            string[] requestLine = requestLines[0]
                 .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
             if (requestLine.Length != 3 || requestLine[2].ToLower() != "http/1.1")
@@ -69,6 +69,17 @@
             this.ParseHeaders(requestLines);
             this.ParseParameters();
             this.ParseFormData(requestLines.Last());
+        }
+
+        private HttpRequestMethod ParseRequestMethod(string method)
+        {
+            HttpRequestMethod parsedMethod;
+            if (!Enum.TryParse(method, true, out parsedMethod))
+            {
+                throw new BadRequestException("Invalid type request method");
+            }
+
+            return parsedMethod;
         }
 
         private void ParseFormData(string formDataLine)
@@ -145,23 +156,5 @@
             }
         }
 
-        private HttpRequestMethod ParseRequestMethod(string method)
-        {
-            //try
-            //{
-            //    return (HttpRequestMethod)Enum.Parse(typeof(HttpRequestMethod), typeRequest, true);
-            //}
-            //catch (Exception)
-            //{
-            //    throw new BadRequestException("Invalid type request method");
-            //}
-            HttpRequestMethod parsedMethod;
-            if (!Enum.TryParse(method, true, out parsedMethod))
-            {
-                throw new BadRequestException("Invalid type request method");
-            }
-
-            return parsedMethod;
-        }
     }
 }

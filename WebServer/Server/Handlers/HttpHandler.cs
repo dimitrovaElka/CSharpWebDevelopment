@@ -1,5 +1,6 @@
 ﻿namespace WebServer.Server.Handlers
 {
+    using Common;
     using Contracts;
     using HTTP.Contracts;
     using HTTP.Response;

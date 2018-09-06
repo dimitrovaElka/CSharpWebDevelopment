@@ -1,5 +1,6 @@
 ﻿namespace WebServer.Server.HTTP.Response
 {
+    using Common;
     using Enums;
 
     public class RedirectResponse : HttpResponse

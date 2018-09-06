@@ -1,6 +1,8 @@
 ﻿
 namespace WebServer.Server.HTTP
 {
+    using Server.Common;
+
     public class HttpHeader
     {
         public const string ContentType = "Content-Type";

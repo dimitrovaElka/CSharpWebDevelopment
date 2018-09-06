@@ -1,9 +1,7 @@
 ﻿
 namespace WebServer.Server.HTTP
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
+    using Common;
     using Contracts;
   
     public class HttpContext : IHttpContext

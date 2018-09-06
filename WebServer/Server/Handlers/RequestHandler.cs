@@ -1,10 +1,11 @@
 ﻿
 namespace WebServer.Server.Handlers
 {
-    using System;
+    using Common;
     using Contracts;
     using Server.HTTP.Contracts;
     using Server.HTTP;
+    using System;
 
     public class RequestHandler : IRequestHandler
     {
