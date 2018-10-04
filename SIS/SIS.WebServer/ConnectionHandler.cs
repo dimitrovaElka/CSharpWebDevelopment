@@ -30,12 +30,12 @@
             var result = new StringBuilder();
             ArraySegment<byte> data = new ArraySegment<byte>(new byte[1024]);
 
-            int numBytesRead;
+            int numberOfBytesRead;
 
-            while ((numBytesRead = await this.client.ReceiveAsync(data, SocketFlags.None)) > 0)
+            while ((numberOfBytesRead = await this.client.ReceiveAsync(data, SocketFlags.None)) > 0)
             {
-                result.Append(Encoding.UTF8.GetString(data.Array, 0, numBytesRead));
-                if (numBytesRead < 1023)
+                result.Append(Encoding.UTF8.GetString(data.Array, 0, numberOfBytesRead));
+                if (numberOfBytesRead < 1023)
                 {
                     break;
                 }

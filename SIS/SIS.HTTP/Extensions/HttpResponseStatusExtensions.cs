@@ -8,9 +8,11 @@ namespace SIS.HTTP.Extensions
     {
         public static string GetResponseLine(this HttpResponseStatusCode code)
         {
-            int statusCodeAsNumber = (int)code;
-            string result = statusCodeAsNumber + " " + code.ToString();
-            return result;
+            //int statusCodeAsNumber = (int)code;
+            //string result = statusCodeAsNumber + " " + code.ToString();
+            //return result;
+
+            return $"{(int)code} {code}";
         }
     }
 }

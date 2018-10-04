@@ -4,11 +4,12 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
-    using SIS.HTTP.Common;
-    using SIS.HTTP.Enums;
-    using SIS.HTTP.Exceptions;
-    using SIS.HTTP.Extensions;
-    using SIS.HTTP.Headers;
+    using Common;
+    using Cookies;
+    using Enums;
+    using Exceptions;
+    using Extensions;
+    using Headers;
 
     public class HttpRequest : IHttpRequest
     {
@@ -17,6 +18,7 @@
             this.FormData = new Dictionary<string, object>();
             this.QueryData = new Dictionary<string, object>();
             this.Headers = new HttpHeaderCollection();
+            this.Cookies = new HttpCookieCollection();
 
             this.ParseRequest(requestString);
         }
@@ -30,6 +32,8 @@
         public Dictionary<string, object> QueryData { get; }
 
         public IHttpHeaderCollection Headers { get; }
+
+        public IHttpCookieCollection Cookies { get; set; }
 
         public HttpRequestMethod RequestMethod { get; private set; }
 
@@ -71,21 +75,38 @@
 
             this.ParseRequestMethod(requestLine);
             this.ParseRequestUrl(requestLine);
+            this.ParseRequestPath();
 
             this.ParseHeaders(splitRequestContent.Skip(1).ToArray());
 
-            this.ParseRequestParameters(splitRequestContent[splitRequestContent.Length - 1]);
-            
+            this.ParseCookies();
+            bool requestHasBody = splitRequestContent.Length > 1;
+            this.ParseRequestParameters(splitRequestContent[splitRequestContent.Length - 1], requestHasBody);
+
         }
 
-        private void ParseRequestParameters(string requestBody)
+        private void ParseCookies()
         {
-            this.ParseQueryParameters(requestBody, FormData);
+            if (this.Headers.ContainsHeader("Cookie"))
+            {
+                var headerCookie = this.Headers.GetHeader("Cookie");
+                HttpCookie cookie = new HttpCookie(headerCookie.Key, headerCookie.Value);
+                Cookies.Add(cookie);
+            }
+        }
+
+        private void ParseRequestParameters(string requestBody, bool requestHasBody)
+        {
+            this.ParseQueryParameters();
+            if (requestHasBody)
+            {
+                ParseFormDataParameters(requestBody);
+            }
         }
 
         private void ParseFormDataParameters(string requestBody)
         {
-            return;
+            FillData(requestBody, this.FormData);
         }
 
         private void ParseHeaders(string[] requestContent)
@@ -128,14 +149,21 @@
         private void ParseRequestPath()
         {
             this.Path = this.Url.Split(new[] { '?', '#' }, StringSplitOptions.RemoveEmptyEntries)[0];
- 
         }
 
         private void ParseRequestUrl(string[] requestLine)
         {
-            this.Url = requestLine[1];
-            this.ParseRequestPath();
+            string url = requestLine[1];
+            if (string.IsNullOrEmpty(url))
+            {
+                throw new BadRequestException();
+            }
 
+            this.Url = url;
+        }
+
+        private void ParseQueryParameters()
+        {
             if (!this.Url.Contains("?"))
             {
                 return;
@@ -150,28 +178,31 @@
                 queryString = queryWithFragment.Substring(0, indexOfFragment);
             }
 
-            this.ParseQueryParameters(queryString, this.QueryData);
+            if (IsValidRequestQueryString(queryString))
+            {
+                this.FillData(queryString, this.QueryData);
+            }
         }
 
-        private void ParseQueryParameters(string queryString, IDictionary<string, object> dict)
+        private void FillData(string dataString, Dictionary<string, object> dict)
         {
-            if (!IsValidRequestQueryString(queryString))
+            if (!IsValidRequestQueryString(dataString))
             {
                 return;
             }
 
-            var queryPairs = queryString.Split(new[] { '&' });
-            foreach (var queryPair in queryPairs)
+            var dataPairs = dataString.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var dataPair in dataPairs)
             {
-                var queryArgs = queryPair.Split(new[] { '=' });
-                if (queryArgs.Length != 2)
+                var dataArgs = dataPair.Split(new[] { '=' });
+                if (dataArgs.Length != 2)
                 {
                     throw new BadRequestException();
                 }
 
-                var queryKey = WebUtility.UrlDecode(queryArgs[0]);
-                var queryValue = WebUtility.UrlDecode(queryArgs[1]);
-                dict.Add(queryKey, queryValue);
+                var dataKey = WebUtility.UrlDecode(dataArgs[0]);
+                var dataValue = WebUtility.UrlDecode(dataArgs[1]);
+                dict[dataKey] = dataValue;
             }
         }
 
@@ -190,4 +221,7 @@
         }
 
     }
+
+
 }
+

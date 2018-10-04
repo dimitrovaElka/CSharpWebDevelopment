@@ -33,11 +33,6 @@
 
         public byte[] GetBytes()
         {
-            //byte[] array = Encoding.UTF8.GetBytes(this.ToString());
-
-            //this.Content = this.Content.Concat(array).ToArray();
-            //return array;
-
             return Encoding.UTF8.GetBytes(this.ToString()).Concat(this.Content).ToArray();
         }
 
@@ -47,7 +42,9 @@
 
             response.AppendLine($"{GlobalConstants.HttpOneProtokolFragment} {this.StatusCode.GetResponseLine()}");
 
-            response.AppendLine(this.Headers.ToString());
+            response.AppendLine($"{this.Headers}");
+
+            response.Append(Environment.NewLine);
 
             return response.ToString();
         }
