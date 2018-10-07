@@ -19,14 +19,7 @@
             CoreValidator.ThrowIfNull(header.Key, nameof(header.Key));
             CoreValidator.ThrowIfNull(header.Value, nameof(header.Value));
 
-            var headerKey = header.Key;
-
-            //if (!this.headers.ContainsKey(headerKey))
-            //{
-            //    this.headers[headerKey] = new List<HttpHeader>();
-            //}
-
-            this.headers[headerKey] = header;
+            this.headers.Add(header.Key, header);
         }
 
         public bool ContainsHeader(string key)
@@ -40,25 +33,12 @@
         {
             CoreValidator.ThrowIfNull(key, nameof(key));
 
-            if (!this.headers.ContainsKey(key))
-            {
-                return null;
-            }
-
-            var result = this.headers[key];
-            return result;
+            return this.headers.GetValueOrDefault(key, null);
         }
 
         public override string ToString()
         {
-            var result = new StringBuilder();
-
-            foreach (var header in this.headers)
-            {
-                result.AppendLine($"{header.Key}: {header.Value}");
-            }
-
-            return result.ToString();
+            return string.Join(Environment.NewLine, this.headers.Values);
         }
     }
 }

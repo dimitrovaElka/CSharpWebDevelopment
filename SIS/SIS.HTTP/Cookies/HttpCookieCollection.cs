@@ -1,41 +1,53 @@
 ﻿namespace SIS.HTTP.Cookies
 {
-    using System;
+    using Common;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
 
     public class HttpCookieCollection : IHttpCookieCollection
     {
-        private readonly IDictionary<string, ICollection<HttpCookie>> cookies;
+        private readonly Dictionary<string, HttpCookie> cookies;
 
         public HttpCookieCollection()
         {
-            this.cookies = new Dictionary<string, ICollection<HttpCookie>>();
+            this.cookies = new Dictionary<string, HttpCookie>();
         }
 
         public void Add(HttpCookie cookie)
         {
-            var cookieKey = cookie.Key;
-            if (!this.cookies.ContainsKey(cookieKey))
-            {
-                this.cookies[cookieKey] = new List<HttpCookie>();
-            }
-            this.cookies[cookieKey].Add(cookie);
+            CoreValidator.ThrowIfNull(cookie, nameof(cookie));
+            this.cookies.Add(cookie.Key, cookie);
         }
 
         public bool ContainsCookie(string key)
         {
+            CoreValidator.ThrowIfNullOrEmpty(key, nameof(key));
             return this.cookies.ContainsKey(key);
         }
 
         public HttpCookie GetCookie(string key)
         {
-            return this.cookies[key].FirstOrDefault();
+            CoreValidator.ThrowIfNullOrEmpty(key, nameof(key));
+            return this.cookies.GetValueOrDefault(key, null);
         }
 
         public bool HasCookies()
         {
             return this.cookies.Count > 0;
+        }
+
+        public IEnumerator<HttpCookie> GetEnumerator()
+        {
+            foreach (var cookie in this.cookies)
+            {
+                yield return cookie.Value;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         public override string ToString()
